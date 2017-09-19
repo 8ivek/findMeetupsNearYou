@@ -1,6 +1,6 @@
 # Find Meetups Near You
 ## Description
-I always wanted to attend meetups in my free times (after my office or before) but meetup.com do not have such features so I created this application which performs that.
+I always wanted to attend meetups in my free times (after my office or before) but meetup.com do not have feature to select time interval, so I created this application.
 This application gets events between given **start time** and **end time**, around given **radius** and in your current **latitude**.
 note: the application gets all the weekend events regardless of time.  
 
