@@ -15,12 +15,12 @@ note: the application gets all the weekend events regardless of time.
 meetup.php?radius=1&latitude=43.668758&start_time=7%3A30%20pm&end_time=7%3A30%20am
 
 ### Demo
-[Click here for demo](http://bivek.ca/meetup.php?radius=1&latitude=43.668758&start_time=7%3A30%20pm&end_time=7%3A30%20am "Bivek.ca Meeup demo")
+<a href="http://bivek.ca/meetup.php?radius=1&latitude=43.668758&start_time=7%3A30%20pm&end_time=7%3A30%20am" target="_blank" title="Bivek.ca Meeup demo">Click here for demo</a>
 
 ### Message
-[Message me from the contact from in my site :love_letter:](http://bivek.ca "Bivek.ca Contact Form")
+<a href="http://bivek.ca" target="_blank" title="Contact Form">Message me from the contact from in my site :love_letter:</a>
 
 ### Donate
-[Donate](https://www.paypal.me/bivek/5 "Donation me")
+<a href="https://www.paypal.me/bivek/5" target="_blank" title="Donation me">Donate :gift_heart:</a>
 
 Thanks cheers :smile: :gift_heart: :love_letter: :rose:
