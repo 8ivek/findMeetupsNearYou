@@ -15,15 +15,27 @@ class Event{
 	public $event_how_to_find_us;
 	public $event_duration;
 	private $data;
-	function __construct($data)
+	private $user_tz;
+
+	function __construct($data,$user_tz)
 	{
-		$this->data=$data;
+		$this->user_tz = $user_tz;
+		$this->data    = $data;
 		$this->set_event_data();
 	}
 
 	private function set_event_data(){
 		$this->event_name = $this->data->name?$this->data->name:'';
-		$this->event_time = $this->data->time?date('Y-m-d h:i a',($this->data->time/1000)):'';
+
+		if(isset($this->data->time) && $this->data->time != '') {
+			$given_timestamp = date('Y-m-d h:i a', $this->data->time/1000);
+			$schedule_date = new DateTime($given_timestamp, new DateTimeZone('UTC'));
+			$schedule_date->setTimeZone(new DateTimeZone($this->user_tz));
+			$this->event_time = $schedule_date->format('Y-m-d H:i');
+		}else {
+			$this->event_time = '';
+		}
+
 		$this->event_yes_rsvp_count = $this->data->yes_rsvp_count?$this->data->yes_rsvp_count:'';
 		$this->event_venue = $this->data->venue->name?$this->data->venue->name:'';
 		$this->event_venue .= $this->data->venue->city?','.$this->data->venue->city:'';
@@ -123,19 +135,17 @@ class EventInfo{
 
 		$given_timestamp = date('Y-m-d h:i a',$given_timestamp);
 		$schedule_date = new DateTime($given_timestamp, new DateTimeZone('UTC') );
-		$schedule_date->setTimeZone(new DateTimeZone($this->user_tz));
-		$given_timestamp = $schedule_date->getTimestamp();
+		$schedule_date = $schedule_date->setTimeZone(new DateTimeZone($this->user_tz));
+		$date1 = $schedule_date->format('h:i a');
+		$day = strtolower($schedule_date->format('l'));
 
 		/*If event*/
-		$day= strtolower(date('l',$given_timestamp));
 		if($day == 'sunday' || $day =='saturday'){
 			return true;
 		}else{
 
 			//check if event is in between given interval
-			$given_timestamp = date('h:i a',$given_timestamp);
-
-			$date1 = DateTime::createFromFormat('h:i a', $given_timestamp);
+			$date1 = DateTime::createFromFormat('h:i a', $date1);
 			$date2 = DateTime::createFromFormat('h:i a', $this->start_time);
 			$date3 = DateTime::createFromFormat('h:i a', $this->end_time);
 			if($date1 > $date3){
@@ -159,7 +169,7 @@ class EventInfo{
 			$given_timestamp = $data->time/1000;
 			if($this->checkEventTime($given_timestamp)){
 				$this->events_found++;
-				$event = new Event($data);
+				$event = new Event($data,$this->user_tz);
 				echo $event->format_event_data();
 			}else{
 				$this->ignored_events++;
