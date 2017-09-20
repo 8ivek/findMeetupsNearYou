@@ -178,7 +178,13 @@ if(isset($_GET['radius'])){
 if(isset($_GET['latitude'])){
 	$latitude = $_GET['latitude'];
 }else{
-	$latitude = 43.668758;
+	$latitude = 43.668605;
+}
+
+if(isset($_GET['longitude'])){
+	$longitude = $_GET['longitude'];
+}else{
+	$longitude = -79.371928;
 }
 
 if(isset($_GET['start_time'])){
@@ -194,11 +200,14 @@ if(isset($_GET['end_time'])){
 }
 $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
 $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$uri_parts[0]";
-echo "<div>URL params supported: ".$current_page_link."?radius=1&latitude=43.668758&start_time=urlencode(7:30 pm)&end_time=urlencoded(7:30 am)<br />
-example url: ".$current_page_link."?radius=1&latitude=43.668758&start_time=7%3A30%20pm&end_time=7%3A30%20am<br />
+echo "<div>URL params supported: ".$current_page_link."?radius=1&latitude=43.668605&longitude=-79.371928&start_time=urlencode(7:30 pm)&end_time=urlencoded(7:30 am)<br />
+example url: ".$current_page_link."?radius=1&latitude=43.668605&longitude=-79.371928&start_time=7%3A30%20pm&end_time=7%3A30%20am<br />
 more help: <a href='https://github.com/8ivek/findMeetupsNearYou' target='_blank'>https://github.com/8ivek/findMeetupsNearYou</a>
 </div>";
-$eventInfo = new EventInfo('America/Toronto','https://api.meetup.com/find/events?photo-host=public&sig_id=70812202&radius='.$radius.'&lat='.$latitude.'&sig=4f5c3097f04d92d1cd527864ede0f8f68cdd970f',$start_time,$end_time);
+
+//8iv: JSON URL Format for latitude and longitude is contracted so do not change it.
+$json_url = 'https://api.meetup.com/find/events?photo-host=public&sig_id=70812202&radius='.$radius.'&lat='.$latitude.'&lon='.$longitude.'&sig=4f5c3097f04d92d1cd527864ede0f8f68cdd970f';
+$eventInfo = new EventInfo('America/Toronto',$json_url,$start_time,$end_time);
 echo "<table border='0' cellpadding='5' cellspacing='5' width='100%'>";
 $eventInfo->displayEvents();
 echo "</table>";
