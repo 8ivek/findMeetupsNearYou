@@ -133,11 +133,11 @@ class EventInfo{
 		}else{
 
 			//check if event is in between given interval
-			$given_timestamp = date('H:i a',$given_timestamp);
+			$given_timestamp = date('h:i a',$given_timestamp);
 
-			$date1 = DateTime::createFromFormat('H:i a', $given_timestamp);
-			$date2 = DateTime::createFromFormat('H:i a', $this->start_time);
-			$date3 = DateTime::createFromFormat('H:i a', $this->end_time);
+			$date1 = DateTime::createFromFormat('h:i a', $given_timestamp);
+			$date2 = DateTime::createFromFormat('h:i a', $this->start_time);
+			$date3 = DateTime::createFromFormat('h:i a', $this->end_time);
 			if($date1 > $date3){
 				$date3->modify('+1 day');
 			}
