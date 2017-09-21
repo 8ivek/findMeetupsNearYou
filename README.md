@@ -23,7 +23,7 @@ We can also change the search filter using following form on the top of the page
 click the demo link below for more
 
 ### Demo
-<a href="http://bivek.ca/meetup/?radius=1&latitude=43.668758&longitude=-79.371928&start_time=7%3A30%20pm&end_time=7%3A30%20am" target="_blank" title="Bivek.ca Meeup demo">Click here for demo</a>
+<a href="https://goo.gl/evWMtg" target="_blank" title="Bivek.ca Meeup demo">Click here for demo</a>
 
 ### Message
 <a href="http://bivek.ca" target="_blank" title="Contact Form">Message me from the contact from in my site :love_letter:</a>
