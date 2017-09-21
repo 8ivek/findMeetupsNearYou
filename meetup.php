@@ -210,33 +210,137 @@ if(isset($_GET['end_time'])){
 }
 $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
 $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$uri_parts[0]";
-echo "<div>URL params supported: ".$current_page_link."?radius=1&latitude=43.668605&longitude=-79.371928&start_time=urlencode(7:30 pm)&end_time=urlencoded(7:30 am)<br />
-example url: ".$current_page_link."?radius=1&latitude=43.668605&longitude=-79.371928&start_time=7%3A30%20pm&end_time=7%3A30%20am<br />
-more help: <a href='https://github.com/8ivek/findMeetupsNearYou' target='_blank'>https://github.com/8ivek/findMeetupsNearYou</a>
-</div>";
-
-//8iv: JSON URL Format for latitude and longitude is contracted so do not change it.
-$json_url = 'https://api.meetup.com/find/events?photo-host=public&sig_id=70812202&radius='.$radius.'&lat='.$latitude.'&lon='.$longitude.'&sig=4f5c3097f04d92d1cd527864ede0f8f68cdd970f';
-$eventInfo = new EventInfo('America/Toronto',$json_url,$start_time,$end_time);
-echo "<table border='0' cellpadding='5' cellspacing='5' width='100%'>";
-$eventInfo->displayEvents();
-echo "</table>";
-
 ?>
-<style type="text/css">
-	table {
-		font-family: arial, sans-serif;
-		border-collapse: collapse;
-		width: 100%;
-	}
+<html>
+<head>
+	<title>Find Meetups Near You : bivek.ca</title>
+	<meta name="Description" content="Find Meetups Near You, Bivek Joshi Full Stack Web Developer Toronto Ontario, Experienced in Laravel, Expressjs, Reactjs" />
+	<meta name="Keywords" content="Find Meetups Near You, Bivek Joshi, Full Stack,  FullStack, Web Developer, Toronto, Ontario, Laravel, Expressjs, Reactjs" />
+	<style type="text/css">
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+		}
 
-	td, th {
-		border: 1px solid #dddddd;
-		text-align: left;
-		padding: 8px;
-	}
+		td, th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
 
-	tbody:nth-child(even) {
-		background-color: #dddddd;
-	}
-</style>
+		tbody:nth-child(even) {
+			background-color: #dddddd;
+		}
+		.shownote{
+			font-size:11px;
+		}
+	</style>
+</head>
+<body>
+	<div class="row">
+		<form name="FindNearbyMeetupup" id="FindNearbyMeetupup" method="get" target="">
+			<table class="table-responsive">
+				<tr>
+					<th colspan="2">Search Nearby meetup</th>
+				</tr>
+				<tr>
+					<td>Radius</td>
+					<td><select name="radius">
+							<?php
+							for ($i=1;$i<=15;$i++){
+								?>
+								<option value="<?php echo $i;?>" <?php echo (isset($_GET['radius']) && $_GET['radius']==$i)?'selected':'';?>><?php echo $i;?> km(s)</option>
+							<?php
+							}
+							?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><input type="button" onclick="getLocation();" value="Get your latitude and longitude" /> <span id="showmsg" class="shownote"></span></td>
+				</tr>
+				<tr>
+					<td>Your Latitude</td>
+					<td><input type="text" name="latitude" id="latitude" value="<?php echo (isset($_GET['latitude']) && $_GET['latitude']!='')?$_GET['latitude']:'';?>" /></td>
+				</tr>
+				<tr>
+					<td>Your Longitude</td>
+					<td><input type="text" name="longitude" id="longitude" value="<?php echo (isset($_GET['longitude']) && $_GET['longitude']!='')?$_GET['longitude']:'';?>" /></td>
+				</tr>
+				<tr>
+					<td>Start time: </td>
+					<td>
+						<select name="start_time">
+							<option value="0">Select Start Time</option>
+							<?php
+							foreach(array('am','pm') as $val){
+								for($i=1;$i<=12;$i++){
+									for($j=0;$j<60;$j+=15){
+										?><option value="<?php echo $i;?>:<?php echo str_pad($j, 2, "0", STR_PAD_LEFT);?> <?php echo $val;?>" <?php echo (isset($_GET['start_time']) && $_GET['start_time'] == $i.':'.str_pad($j, 2, "0", STR_PAD_LEFT).' '.$val)?'selected':'';?>><?php echo $i;?>:<?php echo str_pad($j, 2, "0", STR_PAD_LEFT);?> <?php echo $val;?></option>
+										<?php
+									}
+								}
+							}
+							?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>End time: </td>
+					<td>
+						<select name="end_time">
+							<option value="0">Select End Time</option>
+							<?php
+							foreach(array('am','pm') as $val){
+								for($i=1;$i<=12;$i++){
+									for($j=0;$j<60;$j+=15){
+										?><option value="<?php echo $i;?>:<?php echo str_pad($j, 2, "0", STR_PAD_LEFT);?> <?php echo $val;?>" <?php echo (isset($_GET['end_time']) && $_GET['end_time'] == $i.':'.str_pad($j, 2, "0", STR_PAD_LEFT).' '.$val)?'selected':'';?>><?php echo $i;?>:<?php echo str_pad($j, 2, "0", STR_PAD_LEFT);?> <?php echo $val;?></option>
+										<?php
+									}
+								}
+							}
+							?>
+						</select>&nbsp;<span class="shownote">End time will be considered the next day if its less than start time.</span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><input type="submit" name="s" value="Search Meetups" /></td>
+				</tr>
+		</table>
+		</form>
+	</div>
+	<div>URL params supported: <?php echo $current_page_link;?>?radius=1&latitude=43.668605&longitude=-79.371928&start_time=urlencode(7:30 pm)&end_time=urlencoded(7:30 am)<br />
+		example url: <?php echo $current_page_link;?>?radius=1&latitude=43.668605&longitude=-79.371928&start_time=7%3A30%20pm&end_time=7%3A30%20am<br />
+		more help: <a href='https://github.com/8ivek/findMeetupsNearYou' target='_blank'>https://github.com/8ivek/findMeetupsNearYou</a>
+	</div>
+	<?php
+	//8iv: JSON URL Format for latitude and longitude is contracted so do not change it.
+	$json_url = 'https://api.meetup.com/find/events?photo-host=public&sig_id=70812202&radius='.$radius.'&lat='.$latitude.'&lon='.$longitude.'&sig=4f5c3097f04d92d1cd527864ede0f8f68cdd970f';
+	$eventInfo = new EventInfo('America/Toronto',$json_url,$start_time,$end_time);
+	?>
+	<table border='0' cellpadding='5' cellspacing='5' width='100%'>
+		<?php $eventInfo->displayEvents();?>
+	</table>
+
+	<script type="text/javascript">
+		var x = document.getElementById("showmsg");
+		var lat = document.getElementById("latitude");
+		var lon = document.getElementById("longitude");
+
+		function getLocation() {
+			if (navigator.geolocation) {
+				navigator.geolocation.watchPosition(showPosition);
+			} else {
+				x.innerHTML = "Geolocation is not supported by this browser.";
+			}
+		}
+
+		function showPosition(position) {
+			x.innerHTML = "Your Latitude: " + position.coords.latitude + ", Your Longitude: " + position.coords.longitude;
+			lat.value = position.coords.latitude;
+			lon.value = position.coords.longitude;
+		}
+	</script>
+</body>
+</html>
