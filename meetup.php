@@ -216,6 +216,7 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 	<title>Find Meetups Near You : bivek.ca</title>
 	<meta name="Description" content="Find Meetups Near You, Bivek Joshi Full Stack Web Developer Toronto Ontario, Experienced in Laravel, Expressjs, Reactjs" />
 	<meta name="Keywords" content="Find Meetups Near You, Bivek Joshi, Full Stack,  FullStack, Web Developer, Toronto, Ontario, Laravel, Expressjs, Reactjs" />
+	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
 	<style type="text/css">
 		table {
 			font-family: arial, sans-serif;
