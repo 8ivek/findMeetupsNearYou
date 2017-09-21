@@ -14,10 +14,10 @@ This application gets events between given **start time** and **end time**, arou
 * **end_time**      = urlencoded(7:30 am) (time before which you are free on mornings)
  
 ### Example URL:
-meetup.php?radius=1&latitude=43.668758&longitude=-79.371928&start_time=7%3A30%20pm&end_time=7%3A30%20am
+index.php?radius=1&latitude=43.668758&longitude=-79.371928&start_time=7%3A30%20pm&end_time=7%3A30%20am
 
 ### Demo
-<a href="http://bivek.ca/meetup.php?radius=1&latitude=43.668758&longitude=-79.371928&start_time=7%3A30%20pm&end_time=7%3A30%20am" target="_blank" title="Bivek.ca Meeup demo">Click here for demo</a>
+<a href="http://bivek.ca/meetup/?radius=1&latitude=43.668758&longitude=-79.371928&start_time=7%3A30%20pm&end_time=7%3A30%20am" target="_blank" title="Bivek.ca Meeup demo">Click here for demo</a>
 
 ### Message
 <a href="http://bivek.ca" target="_blank" title="Contact Form">Message me from the contact from in my site :love_letter:</a>
