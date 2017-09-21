@@ -17,7 +17,7 @@ This application gets events between given **start time** and **end time**, arou
 index.php?radius=1&latitude=43.668758&longitude=-79.371928&start_time=7%3A30%20pm&end_time=7%3A30%20am
 
 ### Search form:
-We can also change our search filter using form on the top of the page.
+We can also change the search filter using following form on the top of the page.
 ![Search Form Image](http://bivek.ca/meetup/search_form.jpg)
 
 click the demo link below for more
