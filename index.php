@@ -337,7 +337,7 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 		};
 
 		var tryAPIGeolocation = function() {
-			jQuery.post( "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDCa1LUe1vOczX1hO_iGYgyo8p_jYuGOPU", function(success) {
+			jQuery.post( "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBnrQtnbmeHlUo8_RlkTPdtkB4Y_N3rXm8", function(success) {
 				apiGeolocationSuccess({coords: {latitude: success.location.lat, longitude: success.location.lng}});
 			})
 				.fail(function(err) {
