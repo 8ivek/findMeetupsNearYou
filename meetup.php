@@ -258,7 +258,7 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 					</td>
 				</tr>
 				<tr>
-					<td colspan="2"><input type="button" onclick="getLocation();" value="Get your latitude and longitude" /> <span id="showmsg" class="shownote"></span></td>
+					<td colspan="2"><input type="button" onclick="tryGeolocation();/*getLocation();*/" value="Get your latitude and longitude" /> <span id="showmsg" class="shownote"></span></td>
 				</tr>
 				<tr>
 					<td>Your Latitude</td>
@@ -328,7 +328,56 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 		var lat = document.getElementById("latitude");
 		var lon = document.getElementById("longitude");
 
-		function getLocation() {
+		var apiGeolocationSuccess = function(position) {
+			x.innerHTML = "Your Latitude: " + position.coords.latitude + ", Your Longitude: " + position.coords.longitude;
+			lat.value = position.coords.latitude;
+			lon.value = position.coords.longitude;
+			//alert("API geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
+		};
+
+		var tryAPIGeolocation = function() {
+			jQuery.post( "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDCa1LUe1vOczX1hO_iGYgyo8p_jYuGOPU", function(success) {
+				apiGeolocationSuccess({coords: {latitude: success.location.lat, longitude: success.location.lng}});
+			})
+				.fail(function(err) {
+					alert("API Geolocation error! \n\n"+err);
+				});
+		};
+
+		var browserGeolocationSuccess = function(position) {
+			x.innerHTML = "Your Latitude: " + position.coords.latitude + ", Your Longitude: " + position.coords.longitude;
+			lat.value = position.coords.latitude;
+			lon.value = position.coords.longitude;
+			//alert("Browser geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
+		};
+
+		var browserGeolocationFail = function(error) {
+			switch (error.code) {
+				case error.TIMEOUT:
+					alert("Browser geolocation error !\n\nTimeout.");
+					break;
+				case error.PERMISSION_DENIED:
+					if(error.message.indexOf("Only secure origins are allowed") == 0) {
+						tryAPIGeolocation();
+					}
+					break;
+				case error.POSITION_UNAVAILABLE:
+					alert("Browser geolocation error !\n\nPosition unavailable.");
+					break;
+			}
+		};
+
+		var tryGeolocation = function() {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					browserGeolocationSuccess,
+					browserGeolocationFail,
+					{maximumAge: 50000, timeout: 20000, enableHighAccuracy: true});
+			}
+		};
+
+
+		/*function getLocation() {
 			if (navigator.geolocation) {
 				navigator.geolocation.watchPosition(showPosition);
 			} else {
@@ -340,7 +389,7 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 			x.innerHTML = "Your Latitude: " + position.coords.latitude + ", Your Longitude: " + position.coords.longitude;
 			lat.value = position.coords.latitude;
 			lon.value = position.coords.longitude;
-		}
+		}*/
 	</script>
 </body>
 </html>
