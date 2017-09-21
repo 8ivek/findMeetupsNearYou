@@ -185,25 +185,25 @@ if(isset($_GET['radius'])){
 	$radius = 1;
 }
 
-if(isset($_GET['latitude'])){
+if(isset($_GET['latitude']) && $_GET['latitude']!=''){
 	$latitude = $_GET['latitude'];
 }else{
 	$latitude = 43.668605;
 }
 
-if(isset($_GET['longitude'])){
+if(isset($_GET['longitude']) && $_GET['longitude']!=''){
 	$longitude = $_GET['longitude'];
 }else{
 	$longitude = -79.371928;
 }
 
-if(isset($_GET['start_time'])){
+if(isset($_GET['start_time']) && $_GET['start_time']>0){
 	$start_time = urldecode($_GET['start_time']);
 }else{
 	$start_time = '7:30 pm';
 }
 
-if(isset($_GET['end_time'])){
+if(isset($_GET['end_time']) && $_GET['end_time']>0){
 	$end_time = urldecode($_GET['end_time']);
 }else{
 	$end_time = '7:30 am';
@@ -217,6 +217,7 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 	<meta name="Description" content="Find Meetups Near You, Bivek Joshi Full Stack Web Developer Toronto Ontario, Experienced in Laravel, Expressjs, Reactjs" />
 	<meta name="Keywords" content="Find Meetups Near You, Bivek Joshi, Full Stack,  FullStack, Web Developer, Toronto, Ontario, Laravel, Expressjs, Reactjs" />
 	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGxWszRZAsOsiUVlBnkK74uYFLPz9487Y&libraries=places"></script>
 	<style type="text/css">
 		table {
 			font-family: arial, sans-serif;
@@ -259,7 +260,7 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 					</td>
 				</tr>
 				<tr>
-					<td colspan="2"><input type="button" onclick="tryGeolocation();/*getLocation();*/" value="Get your latitude and longitude" /> <span id="showmsg" class="shownote"></span></td>
+					<td colspan="2"><input type="text" id="yaddress" name="address" placeholder="Your Address" value="<?php echo (isset($_GET['address']) && $_GET['address']!='')?trim($_GET['address']):'';?>" size="30" /><input type="button" onclick="tryGeolocation();/*getLocation();*/" value="Get your current latitude and longitude" /> <span class="shownote">Type your address and get latitude / longitude or hit button to get your <strong>current</strong> latitude and longitude</span><br /><span id="showmsg" class="shownote"></span></td>
 				</tr>
 				<tr>
 					<td>Your Latitude</td>
@@ -311,8 +312,8 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 		</table>
 		</form>
 	</div>
-	<div>URL params supported: <?php echo $current_page_link;?>?radius=1&latitude=43.668605&longitude=-79.371928&start_time=urlencode(7:30 pm)&end_time=urlencoded(7:30 am)<br />
-		example url: <?php echo $current_page_link;?>?radius=1&latitude=43.668605&longitude=-79.371928&start_time=7%3A30%20pm&end_time=7%3A30%20am<br />
+	<div>URL params supported: <?php echo $current_page_link;?>?radius=<?php echo $radius;?>&latitude=<?php echo $latitude;?>&longitude=<?php echo $longitude;?>&start_time=<?php echo $start_time;?>&end_time=<?php echo $end_time;?><br />
+		example url: <?php echo $current_page_link;?>?radius=<?php echo $radius;?>&latitude=<?php echo $latitude;?>&longitude=<?php echo $longitude;?>&start_time=<?php echo $start_time;?>&end_time=<?php echo $end_time;?><br />
 		more help: <a href='https://github.com/8ivek/findMeetupsNearYou' target='_blank'>https://github.com/8ivek/findMeetupsNearYou</a>
 	</div>
 	<?php
@@ -333,7 +334,6 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 			x.innerHTML = "Your Latitude: " + position.coords.latitude + ", Your Longitude: " + position.coords.longitude;
 			lat.value = position.coords.latitude;
 			lon.value = position.coords.longitude;
-			//alert("API geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
 		};
 
 		var tryAPIGeolocation = function() {
@@ -349,7 +349,6 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 			x.innerHTML = "Your Latitude: " + position.coords.latitude + ", Your Longitude: " + position.coords.longitude;
 			lat.value = position.coords.latitude;
 			lon.value = position.coords.longitude;
-			//alert("Browser geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
 		};
 
 		var browserGeolocationFail = function(error) {
@@ -369,6 +368,7 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 		};
 
 		var tryGeolocation = function() {
+			jQuery('#yaddress').val('');
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
 					browserGeolocationSuccess,
@@ -376,21 +376,34 @@ $current_page_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVE
 					{maximumAge: 50000, timeout: 20000, enableHighAccuracy: true});
 			}
 		};
+	</script>
+	<script type="text/javascript">
+		var autocomplete;
 
+		function initialize() {
+			var options = {
+				types: ['geocode']
+			};
+			var input = document.getElementById('yaddress');
+			autocomplete = new google.maps.places.Autocomplete(input, options);
+			google.maps.event.addListener(autocomplete, 'place_changed', function() {
+				var place = autocomplete.getPlace();
+				// get lat
+				var lat = place.geometry.location.lat();
+				// get lng
+				var lng = place.geometry.location.lng();
 
-		/*function getLocation() {
-			if (navigator.geolocation) {
-				navigator.geolocation.watchPosition(showPosition);
-			} else {
-				x.innerHTML = "Geolocation is not supported by this browser.";
-			}
+				if(lat!='' && lng!=''){
+					console.log(lat+'::'+lng);
+					jQuery('#latitude').val(lat);
+					jQuery('#longitude').val(lng);
+				}
+			});
 		}
 
-		function showPosition(position) {
-			x.innerHTML = "Your Latitude: " + position.coords.latitude + ", Your Longitude: " + position.coords.longitude;
-			lat.value = position.coords.latitude;
-			lon.value = position.coords.longitude;
-		}*/
+		window.onload = function() {
+			initialize();
+		};
 	</script>
 </body>
 </html>
